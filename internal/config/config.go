@@ -17,7 +17,7 @@ import (
 //we are using struct tags ``
 
 type HTTPServer struct {
-	Addr string
+	Addr string `yaml:"address" env-required:"true"`
 }
 //env-default:"production"
 type Config struct {
@@ -37,6 +37,7 @@ func MustLoad() *Config{
 	configPath = os.Getenv("CONFIG_PATH") //we can take from env if available
 	if configPath == ""{
 		//if not in env, we can check in cli flags i.e --config
+		//like in our case we dont have env, we have everything in local.yaml
 		flags := flag.String("config","","path to the configuration file")
 		flag.Parse()
 
