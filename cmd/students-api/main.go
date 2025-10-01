@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/avinendra08/students-api/internal/config"
+	"github.com/avinendra08/students-api/internal/http/handlers/student"
 )
 
 func main() {
@@ -22,9 +23,7 @@ func main() {
 	//setup router
 	router := http.NewServeMux()
 
-	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request){
-		w.Write([]byte("welcome to golang backend"))
-	})
+	router.HandleFunc("POST /api/students", student.New())
 
 	//setup server
 	server := http.Server {
@@ -42,7 +41,7 @@ func main() {
 	//starting server
 	go func(){
 		err := server.ListenAndServe() //this is blocking
-		if err!=nil{
+		if err!=nil && err != http.ErrServerClosed{
 			log.Fatal("failed to start server")
 		}
 	}()
@@ -58,7 +57,7 @@ func main() {
 	//shutdown can alone do the job of graceful shutdown, but we use context, why?
 	//because : reason written down
 	err := server.Shutdown(ctx)
-	if err!=nil && err != http.ErrServerClosed{
+	if err!=nil{
 		slog.Error("failed to shutdown server",slog.String("error",err.Error()))
 	}
 
